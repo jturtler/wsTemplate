@@ -153,7 +153,6 @@ public class ApiController extends HttpServlet {
 			String dataReturn = Util.sendRequest( dataStore );
 
 			outputJson.put( "mongoResultStr", dataReturn );		
-			outputJson.put( "mongoResult", new JSONObject( dataReturn ) );	
 			
 			try
 			{							
