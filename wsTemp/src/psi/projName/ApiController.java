@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import psi.projName.classes.Cache;
 import psi.projName.classes.DataStore;
 import psi.projName.classes.DateTimeRecord;
 import psi.projName.classes.utils.*;
@@ -49,6 +50,15 @@ public class ApiController extends HttpServlet {
 						
 						jsonMsg = mongoDoGet( key2 );
 						break;
+						
+					case "varList":
+						jsonMsg = getServletVars( request );
+						break;
+						
+					case "varClear":
+						int deleted = Cache.removeCachedListAll( request.getServletContext() );
+						msgOut = "AttrVals deleted " + deleted;
+						break;						
 				}
 											
 			} catch (Exception ex) 
@@ -135,18 +145,42 @@ public class ApiController extends HttpServlet {
 	}
 
 	
+	private JSONObject getServletVars( HttpServletRequest request ) throws Exception
+	{
+		JSONObject outputJson = new JSONObject();
+		
+		try
+		{
+			outputJson = Cache.getCachedListAll( request.getServletContext() );
+		}
+		catch( Exception ex )
+		{
+			// Util.outputErr( "ERROR on mongoDoGet: " + ex.getMessage() );
+			//throw ex;
+			outputJson.put( "ErrMsg", "ERROR on getServletVars: " + ex.getMessage() );
+		}
+
+		return outputJson;
+	}
+
+	
 	private JSONObject mongoDoPost( HttpServletRequest request, HttpServletResponse response, String key2 ) throws Exception
 	{
 		JSONObject outputJson = new JSONObject();
 		
 		try
 		{
+			
 			JSONObject dtRecord_actionJson = new JSONObject();
 			DateTimeRecord dtRecord_RESTCall = new DateTimeRecord( "RESTCall" );	
-			// ------------------------------------
-			
+			// ------------------------------------			
 			
 			JSONObject receivedData = Util.getJsonFromInputStream( request.getInputStream() );
+			outputJson.put( "receivedData", receivedData );
+			
+			
+			Cache.addToCache( request.getServletContext(), outputJson );
+			
 			
 			DataStore dataStore = DataStore.createDataStore_JsonPost( "http://localhost:3000/" + key2, receivedData );
 						
@@ -155,10 +189,8 @@ public class ApiController extends HttpServlet {
 			outputJson.put( "mongoResultStr", dataReturn );		
 			
 			try
-			{							
-				JSONArray jsonArrOutput = new JSONArray( dataReturn );
-				
-				outputJson.put( "mongoResult", jsonArrOutput );				
+			{											
+				outputJson.put( "mongoResult", new JSONObject( dataReturn ) );				
 			}
 			catch ( Exception ex )
 			{

@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.Random;
 import java.util.logging.Level;
 
 import javax.servlet.http.HttpServletRequest;
@@ -510,6 +511,20 @@ public class Util {
 		}
 		
 		return outputVal;
-	}
+	}	
+    
+	public static String generateRandomNumbers( int strLength )
+	{
+		String s = "";
+        double d;
+        Random random = new Random();
+        for (int i = 1; i <= strLength; i++) {
+            d = random.nextInt(8) + 1;
+            s = s + ((int)d);
+        }
+
+        return s;
+	}	
+	
 	
 }
