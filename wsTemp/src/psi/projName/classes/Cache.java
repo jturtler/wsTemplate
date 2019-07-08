@@ -18,13 +18,14 @@ public class Cache {
 	public static final String PRE_MONGO_DATA = "MD_";
 
 	// 1. SAVE
-	public static void addToCache( ServletContext servletContext, JSONObject jsonData )
+	public static void addToCache( ServletContext servletContext, JSONObject jsonData, String cacheMarkNo )
 	{
 		String currentDt = DateUtil.getUTCdatetimeAsString();
 
 		JSONObject jsonSummary = new JSONObject();
 		jsonSummary.put( "requestTime", currentDt );
 		jsonSummary.put( "jsonData", jsonData );
+		jsonSummary.put( "cacheMarkNo", cacheMarkNo );
 
 		// Create date time by ....
 		String uniqueNumStr = PRE_MONGO_DATA + DateUtil.getDateStrByFormatStr( "yyMMddHHmmssSSS" ) + "_" + Util.generateRandomNumbers( 4 );		

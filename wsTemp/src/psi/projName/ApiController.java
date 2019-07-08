@@ -177,9 +177,12 @@ public class ApiController extends HttpServlet {
 			
 			JSONObject receivedData = Util.getJsonFromInputStream( request.getInputStream() );
 			outputJson.put( "receivedData", receivedData );
+			String cacheStore = JsonUtil.getJSONStrVal( receivedData, "cacheStore" );
+			String cacheMarkNo = JsonUtil.getJSONStrVal( receivedData, "cacheMarkNo" );
 			
 			
-			Cache.addToCache( request.getServletContext(), outputJson );
+			if ( cacheStore.equals( "Y" ) ) 
+				Cache.addToCache( request.getServletContext(), outputJson, cacheMarkNo );
 			
 			
 			DataStore dataStore = DataStore.createDataStore_JsonPost( "http://localhost:3000/" + key2, receivedData );
